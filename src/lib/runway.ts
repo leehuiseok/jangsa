@@ -137,37 +137,38 @@ interface PromptInput {
 }
 
 // 한국어 메뉴를 영어 설명으로 변환 — Runway는 영어 음식명에 훨씬 정확히 반응합니다.
+// promptText 1000자 한도 때문에 각 항목은 최대한 짧게.
 const KOREAN_DISH_DESCRIPTIONS: { keyword: string; en: string }[] = [
-  { keyword: "떡볶이", en: "tteokbokki — Korean spicy rice cakes in glossy red gochujang sauce, with fish cakes and scallions" },
-  { keyword: "김밥", en: "gimbap — Korean seaweed rice roll filled with vegetables and egg, neatly sliced" },
-  { keyword: "비빔밥", en: "bibimbap — Korean mixed rice bowl with assorted seasoned vegetables, beef, fried egg on top, and gochujang" },
-  { keyword: "김치찌개", en: "kimchi-jjigae — Korean kimchi stew bubbling in a hot stone pot with pork and tofu" },
-  { keyword: "된장찌개", en: "doenjang-jjigae — Korean soybean paste stew with tofu, zucchini, and mushrooms in a hot pot" },
-  { keyword: "순두부", en: "sundubu-jjigae — Korean soft tofu stew, fiery red broth in a sizzling earthen pot with raw egg" },
-  { keyword: "갈비", en: "galbi — Korean grilled marinated beef short ribs, glossy caramelized glaze on a hot grill" },
-  { keyword: "삼겹살", en: "samgyeopsal — Korean grilled pork belly with crispy edges on a hot stone plate, lettuce wraps and ssamjang" },
-  { keyword: "불고기", en: "bulgogi — Korean marinated thinly sliced beef sizzling with onions and sesame seeds" },
-  { keyword: "치킨", en: "Korean fried chicken — crispy double-fried, glossy red-yellow gochujang glaze, sesame seeds" },
-  { keyword: "라면", en: "ramyeon — Korean instant ramen noodles in spicy red broth with egg and scallions in a metal bowl" },
-  { keyword: "냉면", en: "naengmyeon — Korean cold buckwheat noodles in icy broth with cucumber, pear, boiled egg" },
-  { keyword: "칼국수", en: "kalguksu — Korean knife-cut noodle soup with anchovy broth, zucchini, dumplings" },
-  { keyword: "짜장면", en: "jjajangmyeon — Korean-Chinese black bean sauce noodles topped with pork and cucumber julienne" },
-  { keyword: "짬뽕", en: "jjamppong — Korean-Chinese spicy seafood noodle soup, vibrant red broth, mussels, squid, shrimp" },
-  { keyword: "탕수육", en: "tangsuyuk — Korean-Chinese sweet and sour crispy pork, glossy translucent sauce" },
-  { keyword: "만두", en: "mandu — Korean dumplings, golden crispy bottom, steam rising" },
-  { keyword: "파스타", en: "Italian pasta, al-dente noodles twirled on a fork, glossy sauce, parmesan flakes" },
-  { keyword: "피자", en: "wood-fired pizza, blistered crust, melted mozzarella, fresh basil" },
-  { keyword: "스테이크", en: "perfectly seared steak, pink medium-rare interior, sizzling on a cast iron pan" },
-  { keyword: "샐러드", en: "fresh salad bowl, crisp greens, vibrant vegetables, glistening dressing" },
-  { keyword: "버거", en: "gourmet burger, juicy patty, melted cheese, fresh lettuce, brioche bun" },
-  { keyword: "초밥", en: "sushi nigiri assortment, glossy fresh fish on rice, wasabi, soy sauce" },
-  { keyword: "라멘", en: "Japanese ramen, rich broth, chashu pork, soft-boiled egg, scallions, in a deep bowl" },
-  { keyword: "우동", en: "udon noodles in clear dashi broth, tempura on the side, scallions" },
-  { keyword: "돈카츠", en: "tonkatsu — crispy panko-breaded pork cutlet sliced, with shredded cabbage and tonkatsu sauce" },
-  { keyword: "케이크", en: "elegant slice of cake, glossy ganache, garnish, on a ceramic plate" },
-  { keyword: "커피", en: "artisan latte with elaborate latte art in a ceramic cup on a wooden table" },
-  { keyword: "빙수", en: "Korean bingsu — shaved ice mountain with sweet toppings, condensed milk drizzle" },
-  { keyword: "마라탕", en: "malatang — spicy Sichuan numbing hotpot with skewered vegetables and meats in fiery red broth" },
+  { keyword: "떡볶이", en: "Korean tteokbokki, spicy rice cakes in red gochujang sauce" },
+  { keyword: "김밥", en: "Korean gimbap, seaweed rice roll, sliced" },
+  { keyword: "비빔밥", en: "Korean bibimbap, mixed rice with vegetables and gochujang" },
+  { keyword: "김치찌개", en: "Korean kimchi stew in hot stone pot" },
+  { keyword: "된장찌개", en: "Korean doenjang stew with tofu, in hot pot" },
+  { keyword: "순두부", en: "Korean sundubu jjigae, soft tofu stew, red broth" },
+  { keyword: "갈비", en: "Korean galbi, grilled marinated short ribs" },
+  { keyword: "삼겹살", en: "Korean samgyeopsal, grilled pork belly on hot plate" },
+  { keyword: "불고기", en: "Korean bulgogi, marinated sliced beef sizzling" },
+  { keyword: "치킨", en: "Korean fried chicken, crispy with gochujang glaze" },
+  { keyword: "라면", en: "Korean ramyeon noodles in spicy red broth, egg" },
+  { keyword: "냉면", en: "Korean naengmyeon, cold noodles in icy broth" },
+  { keyword: "칼국수", en: "Korean kalguksu, knife-cut noodle soup" },
+  { keyword: "짜장면", en: "Korean jjajangmyeon, black bean sauce noodles" },
+  { keyword: "짬뽕", en: "Korean jjamppong, spicy seafood noodle soup" },
+  { keyword: "탕수육", en: "Korean tangsuyuk, sweet and sour crispy pork" },
+  { keyword: "만두", en: "Korean mandu dumplings, golden crispy" },
+  { keyword: "파스타", en: "Italian pasta, glossy sauce, al-dente" },
+  { keyword: "피자", en: "wood-fired pizza, melted mozzarella, basil" },
+  { keyword: "스테이크", en: "seared steak, medium-rare, on cast iron pan" },
+  { keyword: "샐러드", en: "fresh salad bowl, crisp greens" },
+  { keyword: "버거", en: "gourmet burger, juicy patty, brioche bun" },
+  { keyword: "초밥", en: "sushi nigiri assortment on rice" },
+  { keyword: "라멘", en: "Japanese ramen, rich broth, chashu, egg" },
+  { keyword: "우동", en: "udon noodles in dashi broth" },
+  { keyword: "돈카츠", en: "tonkatsu, crispy panko pork cutlet" },
+  { keyword: "케이크", en: "elegant cake slice, glossy ganache" },
+  { keyword: "커피", en: "artisan latte with latte art, ceramic cup" },
+  { keyword: "빙수", en: "Korean bingsu, shaved ice with toppings" },
+  { keyword: "마라탕", en: "malatang, spicy Sichuan hotpot, red broth" },
 ];
 
 function translateMenuToEnglish(signatureMenu: string): string {
@@ -179,46 +180,47 @@ function translateMenuToEnglish(signatureMenu: string): string {
   return signatureMenu;
 }
 
+const PROMPT_MAX = 990;
+
+function trimToLimit(s: string, limit = PROMPT_MAX): string {
+  if (s.length <= limit) return s;
+  return s.slice(0, limit - 1).trimEnd() + "…";
+}
+
 export function buildImagePrompt(input: PromptInput): string {
   const menuEn = translateMenuToEnglish(input.signatureMenu);
-  return [
-    `IMPORTANT — Generate a photo specifically of: ${menuEn}.`,
-    `This image MUST clearly depict ${input.signatureMenu} (${menuEn}) — not any other dish.`,
-    `Use the reference image only for general food-photography style cues (lighting, framing, color grading), NOT for the dish identity.`,
-    `Context: Instagram-ready hero shot for restaurant "${input.restaurantName}".`,
+  const prompt = [
+    `Hero food photo of: ${menuEn}.`,
+    `Must clearly depict ${input.signatureMenu}, not any other dish.`,
+    `Reference is style-only (lighting, framing); do not copy its dish.`,
+    `Instagram-ready shot for "${input.restaurantName}".`,
     input.mood ? `Mood: ${input.mood}.` : "",
-    input.targetAudience ? `Audience: ${input.targetAudience}.` : "",
-    `Styling: appetizing close-up, soft natural light, shallow depth of field, garnished plating, steam if hot.`,
-    `Composition: centered hero shot, top-down or 3/4 angle, vibrant realistic colors, no text overlays, no logos, no watermarks.`,
+    `Close-up, soft natural light, shallow DOF, garnished plating, steam if hot.`,
+    `Top-down or 3/4 angle, vibrant realistic colors. No text, logos, watermarks.`,
     input.extra ?? "",
   ]
     .filter(Boolean)
     .join(" ");
+  return trimToLimit(prompt);
 }
 
 export function buildVideoPrompt(input: PromptInput): string {
   const menuEn = translateMenuToEnglish(input.signatureMenu);
-  return [
-    // 메인 비주얼 — 메뉴 정체성
-    `Cinematic short-form Korean drama scene featuring ${menuEn} as the hero subject.`,
-    `Setting: a warm, inviting restaurant interior (${input.restaurantName}), realistic everyday atmosphere, lived-in details.`,
-    // 스타일 핵심
-    `Style: realistic 3D cinematic look, Netflix-style Korean drama commercial,`,
-    `shallow depth of field, warm cinematic color grading, soft golden hour lighting,`,
-    `extremely detailed and photoreal food textures — steam rising, glistening sauce, caramelized surfaces.`,
-    // 카메라 / 무드
-    `Camera: slow, subtle push-in toward the dish, gentle parallax, restrained handheld feel, single continuous take.`,
-    `Mood: ${input.mood || "warm and intimate"}, emotional restraint, no exaggerated motion, no fast cuts.`,
-    // 사장님의 스토리 컨셉이 있으면 통합
-    input.storyConcept
-      ? `Narrative beat: ${input.storyConcept}. Convey this with subtle facial expressions and pauses rather than overt acting.`
-      : `Narrative beat: a guest takes a quiet first bite, eyes softening as the flavor lands — "prejudice giving way to genuine appreciation".`,
-    // 인물 묘사 (있을 때만)
-    `If people appear: realistic Korean characters, natural skin tones and clothing, expressive eyes, restrained acting.`,
-    // 금지 사항
-    `Constraints: no text overlays, no subtitles, no watermarks, no logos, no exaggerated facial expressions, no rapid camera movement, no cartoonish elements.`,
+  const beat = input.storyConcept
+    ? `Beat: ${input.storyConcept}.`
+    : `Beat: a guest's quiet first bite, eyes softening — prejudice giving way to genuine appreciation.`;
+  const prompt = [
+    `Cinematic Korean-drama / Netflix-style short ad. Hero: ${menuEn}.`,
+    `Setting: warm restaurant interior of "${input.restaurantName}".`,
+    `Realistic 3D, shallow DOF, warm golden-hour grading, photoreal food textures (steam, glaze).`,
+    `Camera: slow subtle push-in, single take, restrained handheld feel.`,
+    `Mood: ${input.mood || "warm and intimate"}, restrained emotion, no fast cuts.`,
+    beat,
+    `Any people: realistic Korean, natural skin, restrained acting.`,
+    `No text, no subtitles, no watermarks, no exaggerated expressions, no rapid motion.`,
     input.extra ?? "",
   ]
     .filter(Boolean)
     .join(" ");
+  return trimToLimit(prompt);
 }
