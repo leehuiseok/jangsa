@@ -29,9 +29,10 @@ export function GenerateForm({ initialProfile }: { initialProfile: Profile | nul
     mood: initialProfile?.mood ?? "따뜻하고 아늑한",
     targetAudience: initialProfile?.target_audience ?? "20-30대 직장인",
     extra: "",
+    storyConcept: "",
     ratioImage: "1080:1080" as const,
     ratioVideo: "768:1280" as "768:1280" | "1280:768",
-    durationVideo: 5 as 5 | 10,
+    durationVideo: 10 as 5 | 10,
     referenceImageUrl: "",
   });
   const [loading, setLoading] = useState(false);
@@ -67,6 +68,7 @@ export function GenerateForm({ initialProfile }: { initialProfile: Profile | nul
               mood: form.mood,
               targetAudience: form.targetAudience,
               extra: form.extra,
+              storyConcept: form.storyConcept,
               ratio: form.ratioVideo,
               duration: form.durationVideo,
               referenceImageUrl: form.referenceImageUrl || undefined,
@@ -231,14 +233,36 @@ export function GenerateForm({ initialProfile }: { initialProfile: Profile | nul
                     value={String(form.durationVideo)}
                     onChange={(e) => update("durationVideo", Number(e.target.value) as 5 | 10)}
                   >
+                    <option value="10">10초 (권장)</option>
                     <option value="5">5초</option>
-                    <option value="10">10초</option>
                   </Select>
                 </div>
               </>
             )}
           </CardContent>
         </Card>
+
+        {type === "video" && (
+          <Card>
+            <CardHeader>
+              <CardTitle>스토리 컨셉 (선택)</CardTitle>
+              <CardDescription>
+                한국 드라마 / 넷플릭스 광고 톤은 기본 적용돼요. 특별한 장면이나 감정선이
+                있으면 적어주세요. 비워두면 &quot;편견 → 진짜 가치 발견&quot; 기본 스토리로 생성됩니다.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Textarea
+                value={form.storyConcept}
+                onChange={(e) => update("storyConcept", e.target.value)}
+                placeholder={`예시:
+- 단골 손님이 오랜만에 가게에 들러 첫 한 입에 미소짓는 장면
+- 사장님이 새벽부터 재료를 손질하는 정성스러운 손`}
+                rows={5}
+              />
+            </CardContent>
+          </Card>
+        )}
 
         <Card>
           <CardHeader>

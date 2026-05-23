@@ -133,6 +133,7 @@ interface PromptInput {
   mood: string;
   targetAudience?: string;
   extra?: string;
+  storyConcept?: string;
 }
 
 // 한국어 메뉴를 영어 설명으로 변환 — Runway는 영어 음식명에 훨씬 정확히 반응합니다.
@@ -198,10 +199,24 @@ export function buildImagePrompt(input: PromptInput): string {
 export function buildVideoPrompt(input: PromptInput): string {
   const menuEn = translateMenuToEnglish(input.signatureMenu);
   return [
-    `Short cinematic Instagram reel featuring ${menuEn}.`,
-    `Slow push-in / parallax toward the dish, subtle steam rising if hot,`,
-    input.mood ? `${input.mood} ambiance,` : "",
-    `warm lighting, shallow focus, mouth-watering details, food-photography aesthetic.`,
+    // 메인 비주얼 — 메뉴 정체성
+    `Cinematic short-form Korean drama scene featuring ${menuEn} as the hero subject.`,
+    `Setting: a warm, inviting restaurant interior (${input.restaurantName}), realistic everyday atmosphere, lived-in details.`,
+    // 스타일 핵심
+    `Style: realistic 3D cinematic look, Netflix-style Korean drama commercial,`,
+    `shallow depth of field, warm cinematic color grading, soft golden hour lighting,`,
+    `extremely detailed and photoreal food textures — steam rising, glistening sauce, caramelized surfaces.`,
+    // 카메라 / 무드
+    `Camera: slow, subtle push-in toward the dish, gentle parallax, restrained handheld feel, single continuous take.`,
+    `Mood: ${input.mood || "warm and intimate"}, emotional restraint, no exaggerated motion, no fast cuts.`,
+    // 사장님의 스토리 컨셉이 있으면 통합
+    input.storyConcept
+      ? `Narrative beat: ${input.storyConcept}. Convey this with subtle facial expressions and pauses rather than overt acting.`
+      : `Narrative beat: a guest takes a quiet first bite, eyes softening as the flavor lands — "prejudice giving way to genuine appreciation".`,
+    // 인물 묘사 (있을 때만)
+    `If people appear: realistic Korean characters, natural skin tones and clothing, expressive eyes, restrained acting.`,
+    // 금지 사항
+    `Constraints: no text overlays, no subtitles, no watermarks, no logos, no exaggerated facial expressions, no rapid camera movement, no cartoonish elements.`,
     input.extra ?? "",
   ]
     .filter(Boolean)

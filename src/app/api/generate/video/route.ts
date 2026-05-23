@@ -16,9 +16,10 @@ const VideoRequestSchema = z.object({
   mood: z.string().max(120).optional().default(""),
   targetAudience: z.string().max(120).optional().default(""),
   extra: z.string().max(500).optional().default(""),
+  storyConcept: z.string().max(800).optional().default(""),
   ratio: z.enum(["1280:768", "768:1280", "16:9", "9:16"]).default("768:1280"),
-  duration: z.union([z.literal(5), z.literal(10)]).default(5),
-  referenceImageUrl: z.string().url().optional(),
+  duration: z.union([z.literal(5), z.literal(10)]).default(10),
+  referenceImageUrl: z.string().url().optional().or(z.literal("")),
 });
 
 async function waitForImage(taskId: string, maxMs = 180_000): Promise<string> {
@@ -75,7 +76,9 @@ export async function POST(req: Request) {
       target_audience: input.targetAudience,
     });
 
-    let promptImage = input.referenceImageUrl;
+    let promptImage = input.referenceImageUrl && input.referenceImageUrl.length > 0
+      ? input.referenceImageUrl
+      : undefined;
     if (!promptImage) {
       const isVertical = input.ratio === "768:1280" || input.ratio === "9:16";
       const imgRatio = isVertical ? "1080:1920" : "1920:1080";
