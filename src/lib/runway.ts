@@ -73,10 +73,8 @@ export async function createImageTask(opts: CreateImageOptions): Promise<{ id: s
     promptText: opts.promptText,
     model: opts.model ?? "gen4_image",
     ratio: opts.ratio ?? "1080:1080",
+    referenceImages: opts.referenceImages ?? [],
   };
-  if (opts.referenceImages?.length) {
-    body.referenceImages = opts.referenceImages;
-  }
   return runwayFetch<{ id: string }>("/text_to_image", {
     method: "POST",
     body: JSON.stringify(body),
