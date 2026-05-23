@@ -49,6 +49,7 @@ export async function POST(req: Request) {
   try {
     task = await createImageTask({
       promptText: prompt,
+      cuisineType: input.cuisineType,
       ratio: input.ratio,
       model: "gen4_image",
     });

@@ -77,6 +77,7 @@ export async function POST(req: Request) {
           : "1080:1080";
       const imgTask = await createImageTask({
         promptText: buildImagePrompt(input),
+        cuisineType: input.cuisineType,
         model: "gen4_image_turbo",
         ratio: imgRatio,
       });
