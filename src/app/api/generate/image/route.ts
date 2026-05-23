@@ -16,66 +16,77 @@ const ImageRequestSchema = z.object({
 });
 
 export async function POST(req: Request) {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
-  const json = await req.json().catch(() => null);
-  const parsed = ImageRequestSchema.safeParse(json);
-  if (!parsed.success) {
-    return NextResponse.json(
-      { error: "잘못된 입력입니다.", issues: parsed.error.flatten() },
-      { status: 400 }
-    );
-  }
-  const input = parsed.data;
-
-  const prompt = buildImagePrompt(input);
-
-  await supabase.from("profiles").upsert({
-    id: user.id,
-    restaurant_name: input.restaurantName,
-    cuisine_type: input.cuisineType,
-    signature_menu: input.signatureMenu,
-    mood: input.mood,
-    target_audience: input.targetAudience,
-  });
-
-  let task;
   try {
-    task = await createImageTask({
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const json = await req.json().catch(() => null);
+    const parsed = ImageRequestSchema.safeParse(json);
+    if (!parsed.success) {
+      return NextResponse.json(
+        { error: "잘못된 입력입니다.", issues: parsed.error.flatten() },
+        { status: 400 }
+      );
+    }
+    const input = parsed.data;
+    console.log("[image] input", {
+      restaurantName: input.restaurantName,
+      cuisineType: input.cuisineType,
+      signatureMenu: input.signatureMenu,
+      ratio: input.ratio,
+    });
+
+    const prompt = buildImagePrompt(input);
+
+    await supabase.from("profiles").upsert({
+      id: user.id,
+      restaurant_name: input.restaurantName,
+      cuisine_type: input.cuisineType,
+      signature_menu: input.signatureMenu,
+      mood: input.mood,
+      target_audience: input.targetAudience,
+    });
+
+    console.log("[image] creating Runway task");
+    const task = await createImageTask({
       promptText: prompt,
       cuisineType: input.cuisineType,
       ratio: input.ratio,
       model: "gen4_image",
     });
+    console.log("[image] task created", task.id);
+
+    const { data: row, error } = await supabase
+      .from("generations")
+      .insert({
+        user_id: user.id,
+        type: "image",
+        prompt,
+        runway_task_id: task.id,
+        status: "PENDING",
+        meta: input,
+      })
+      .select("id")
+      .single();
+
+    if (error) {
+      console.error("[image] db insert error", error);
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+
+    return NextResponse.json({ id: row.id, taskId: task.id });
   } catch (err) {
+    console.error("[image] FATAL", err);
     return NextResponse.json(
-      { error: err instanceof Error ? err.message : "Runway 호출 실패" },
-      { status: 502 }
+      {
+        error: err instanceof Error ? err.message : "이미지 생성 중 알 수 없는 오류가 발생했습니다.",
+      },
+      { status: 500 }
     );
   }
-
-  const { data: row, error } = await supabase
-    .from("generations")
-    .insert({
-      user_id: user.id,
-      type: "image",
-      prompt,
-      runway_task_id: task.id,
-      status: "PENDING",
-      meta: input,
-    })
-    .select("id")
-    .single();
-
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
-  }
-
-  return NextResponse.json({ id: row.id, taskId: task.id });
 }
