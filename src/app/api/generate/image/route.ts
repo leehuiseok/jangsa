@@ -13,6 +13,7 @@ const ImageRequestSchema = z.object({
   ratio: z
     .enum(["1080:1080", "1080:1920", "1920:1080", "1080:1440", "1440:1080", "1024:1024"])
     .default("1080:1080"),
+  referenceImageUrl: z.string().url().optional().or(z.literal("")),
 });
 
 export async function POST(req: Request) {
@@ -53,11 +54,16 @@ export async function POST(req: Request) {
     });
 
     console.log("[image] creating Runway task");
+    const userRef =
+      input.referenceImageUrl && input.referenceImageUrl.length > 0
+        ? [{ uri: input.referenceImageUrl, tag: "food_style" }]
+        : undefined;
     const task = await createImageTask({
       promptText: prompt,
       cuisineType: input.cuisineType,
       ratio: input.ratio,
       model: "gen4_image",
+      referenceImages: userRef,
     });
     console.log("[image] task created", task.id);
 

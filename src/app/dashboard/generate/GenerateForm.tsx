@@ -9,6 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select } from "@/components/ui/select";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader2, Sparkles, Image as ImageIcon, Video } from "lucide-react";
+import { ReferenceUploader } from "@/components/ReferenceUploader";
 
 interface Profile {
   restaurant_name?: string | null;
@@ -57,6 +58,7 @@ export function GenerateForm({ initialProfile }: { initialProfile: Profile | nul
               targetAudience: form.targetAudience,
               extra: form.extra,
               ratio: form.ratioImage,
+              referenceImageUrl: form.referenceImageUrl || undefined,
             }
           : {
               restaurantName: form.restaurantName,
@@ -233,20 +235,26 @@ export function GenerateForm({ initialProfile }: { initialProfile: Profile | nul
                     <option value="10">10초</option>
                   </Select>
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="referenceImageUrl">기준 이미지 URL (선택)</Label>
-                  <Input
-                    id="referenceImageUrl"
-                    value={form.referenceImageUrl}
-                    onChange={(e) => update("referenceImageUrl", e.target.value)}
-                    placeholder="비워두면 메뉴 이미지를 자동 생성해 사용해요"
-                  />
-                  <p className="text-xs text-stone-500">
-                    URL을 비워두면 먼저 이미지를 만든 뒤 영상으로 이어줍니다.
-                  </p>
-                </div>
               </>
             )}
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>메뉴 사진 업로드 (선택)</CardTitle>
+            <CardDescription>
+              실제 메뉴 사진을 올리시면 AI가 그 사진의 음식 종류를 정확히 반영해 새 컷을 만들어드려요.
+              비워두면 카테고리 기본 사진을 사용합니다.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <ReferenceUploader
+              value={form.referenceImageUrl}
+              onChange={(url) => update("referenceImageUrl", url)}
+              disabled={loading}
+              className="max-w-sm"
+            />
           </CardContent>
         </Card>
       </div>

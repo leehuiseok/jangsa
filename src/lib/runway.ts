@@ -135,25 +135,73 @@ interface PromptInput {
   extra?: string;
 }
 
+// 한국어 메뉴를 영어 설명으로 변환 — Runway는 영어 음식명에 훨씬 정확히 반응합니다.
+const KOREAN_DISH_DESCRIPTIONS: { keyword: string; en: string }[] = [
+  { keyword: "떡볶이", en: "tteokbokki — Korean spicy rice cakes in glossy red gochujang sauce, with fish cakes and scallions" },
+  { keyword: "김밥", en: "gimbap — Korean seaweed rice roll filled with vegetables and egg, neatly sliced" },
+  { keyword: "비빔밥", en: "bibimbap — Korean mixed rice bowl with assorted seasoned vegetables, beef, fried egg on top, and gochujang" },
+  { keyword: "김치찌개", en: "kimchi-jjigae — Korean kimchi stew bubbling in a hot stone pot with pork and tofu" },
+  { keyword: "된장찌개", en: "doenjang-jjigae — Korean soybean paste stew with tofu, zucchini, and mushrooms in a hot pot" },
+  { keyword: "순두부", en: "sundubu-jjigae — Korean soft tofu stew, fiery red broth in a sizzling earthen pot with raw egg" },
+  { keyword: "갈비", en: "galbi — Korean grilled marinated beef short ribs, glossy caramelized glaze on a hot grill" },
+  { keyword: "삼겹살", en: "samgyeopsal — Korean grilled pork belly with crispy edges on a hot stone plate, lettuce wraps and ssamjang" },
+  { keyword: "불고기", en: "bulgogi — Korean marinated thinly sliced beef sizzling with onions and sesame seeds" },
+  { keyword: "치킨", en: "Korean fried chicken — crispy double-fried, glossy red-yellow gochujang glaze, sesame seeds" },
+  { keyword: "라면", en: "ramyeon — Korean instant ramen noodles in spicy red broth with egg and scallions in a metal bowl" },
+  { keyword: "냉면", en: "naengmyeon — Korean cold buckwheat noodles in icy broth with cucumber, pear, boiled egg" },
+  { keyword: "칼국수", en: "kalguksu — Korean knife-cut noodle soup with anchovy broth, zucchini, dumplings" },
+  { keyword: "짜장면", en: "jjajangmyeon — Korean-Chinese black bean sauce noodles topped with pork and cucumber julienne" },
+  { keyword: "짬뽕", en: "jjamppong — Korean-Chinese spicy seafood noodle soup, vibrant red broth, mussels, squid, shrimp" },
+  { keyword: "탕수육", en: "tangsuyuk — Korean-Chinese sweet and sour crispy pork, glossy translucent sauce" },
+  { keyword: "만두", en: "mandu — Korean dumplings, golden crispy bottom, steam rising" },
+  { keyword: "파스타", en: "Italian pasta, al-dente noodles twirled on a fork, glossy sauce, parmesan flakes" },
+  { keyword: "피자", en: "wood-fired pizza, blistered crust, melted mozzarella, fresh basil" },
+  { keyword: "스테이크", en: "perfectly seared steak, pink medium-rare interior, sizzling on a cast iron pan" },
+  { keyword: "샐러드", en: "fresh salad bowl, crisp greens, vibrant vegetables, glistening dressing" },
+  { keyword: "버거", en: "gourmet burger, juicy patty, melted cheese, fresh lettuce, brioche bun" },
+  { keyword: "초밥", en: "sushi nigiri assortment, glossy fresh fish on rice, wasabi, soy sauce" },
+  { keyword: "라멘", en: "Japanese ramen, rich broth, chashu pork, soft-boiled egg, scallions, in a deep bowl" },
+  { keyword: "우동", en: "udon noodles in clear dashi broth, tempura on the side, scallions" },
+  { keyword: "돈카츠", en: "tonkatsu — crispy panko-breaded pork cutlet sliced, with shredded cabbage and tonkatsu sauce" },
+  { keyword: "케이크", en: "elegant slice of cake, glossy ganache, garnish, on a ceramic plate" },
+  { keyword: "커피", en: "artisan latte with elaborate latte art in a ceramic cup on a wooden table" },
+  { keyword: "빙수", en: "Korean bingsu — shaved ice mountain with sweet toppings, condensed milk drizzle" },
+  { keyword: "마라탕", en: "malatang — spicy Sichuan numbing hotpot with skewered vegetables and meats in fiery red broth" },
+];
+
+function translateMenuToEnglish(signatureMenu: string): string {
+  for (const m of KOREAN_DISH_DESCRIPTIONS) {
+    if (signatureMenu.includes(m.keyword)) {
+      return m.en;
+    }
+  }
+  return signatureMenu;
+}
+
 export function buildImagePrompt(input: PromptInput): string {
-  const parts = [
-    `Professional Instagram-ready food photography for a Korean restaurant called "${input.restaurantName}".`,
-    `Cuisine: ${input.cuisineType}.`,
-    `Featured menu: ${input.signatureMenu}.`,
-    `Visual mood: ${input.mood}.`,
-    input.targetAudience ? `Target customer: ${input.targetAudience}.` : "",
-    `Styling: appetizing close-up, soft natural light, shallow depth of field, rich textures, steam if applicable, garnished plating.`,
-    `Composition: centered hero shot, top-down or 3/4 angle, vibrant but realistic colors, no text overlays, no logos.`,
+  const menuEn = translateMenuToEnglish(input.signatureMenu);
+  return [
+    `IMPORTANT — Generate a photo specifically of: ${menuEn}.`,
+    `This image MUST clearly depict ${input.signatureMenu} (${menuEn}) — not any other dish.`,
+    `Use the reference image only for general food-photography style cues (lighting, framing, color grading), NOT for the dish identity.`,
+    `Context: Instagram-ready hero shot for restaurant "${input.restaurantName}".`,
+    input.mood ? `Mood: ${input.mood}.` : "",
+    input.targetAudience ? `Audience: ${input.targetAudience}.` : "",
+    `Styling: appetizing close-up, soft natural light, shallow depth of field, garnished plating, steam if hot.`,
+    `Composition: centered hero shot, top-down or 3/4 angle, vibrant realistic colors, no text overlays, no logos, no watermarks.`,
     input.extra ?? "",
-  ];
-  return parts.filter(Boolean).join(" ");
+  ]
+    .filter(Boolean)
+    .join(" ");
 }
 
 export function buildVideoPrompt(input: PromptInput): string {
+  const menuEn = translateMenuToEnglish(input.signatureMenu);
   return [
-    `Short cinematic Instagram reel for "${input.restaurantName}".`,
-    `Slow push-in toward ${input.signatureMenu}, subtle steam rising, gentle parallax,`,
-    `${input.mood} ambiance, warm lighting, shallow focus, mouth-watering details.`,
+    `Short cinematic Instagram reel featuring ${menuEn}.`,
+    `Slow push-in / parallax toward the dish, subtle steam rising if hot,`,
+    input.mood ? `${input.mood} ambiance,` : "",
+    `warm lighting, shallow focus, mouth-watering details, food-photography aesthetic.`,
     input.extra ?? "",
   ]
     .filter(Boolean)
