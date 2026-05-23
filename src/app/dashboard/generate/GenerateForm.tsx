@@ -29,7 +29,7 @@ export function GenerateForm({ initialProfile }: { initialProfile: Profile | nul
     targetAudience: initialProfile?.target_audience ?? "20-30대 직장인",
     extra: "",
     ratioImage: "1080:1080" as const,
-    ratioVideo: "720:1280" as const,
+    ratioVideo: "768:1280" as "768:1280" | "1280:768",
     durationVideo: 5 as 5 | 10,
     referenceImageUrl: "",
   });
@@ -219,9 +219,8 @@ export function GenerateForm({ initialProfile }: { initialProfile: Profile | nul
                     value={form.ratioVideo}
                     onChange={(e) => update("ratioVideo", e.target.value as typeof form.ratioVideo)}
                   >
-                    <option value="720:1280">세로 9:16 (릴스/스토리)</option>
-                    <option value="1280:720">가로 16:9</option>
-                    <option value="960:960">정사각형 1:1</option>
+                    <option value="768:1280">세로 9:16 (릴스/스토리)</option>
+                    <option value="1280:768">가로 16:9</option>
                   </Select>
                 </div>
                 <div className="space-y-2">

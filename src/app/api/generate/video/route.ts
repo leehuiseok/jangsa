@@ -16,7 +16,7 @@ const VideoRequestSchema = z.object({
   mood: z.string().max(120).optional().default(""),
   targetAudience: z.string().max(120).optional().default(""),
   extra: z.string().max(500).optional().default(""),
-  ratio: z.enum(["1280:720", "720:1280", "960:960"]).default("720:1280"),
+  ratio: z.enum(["1280:768", "768:1280", "16:9", "9:16"]).default("768:1280"),
   duration: z.union([z.literal(5), z.literal(10)]).default(5),
   referenceImageUrl: z.string().url().optional(),
 });
@@ -77,12 +77,8 @@ export async function POST(req: Request) {
 
     let promptImage = input.referenceImageUrl;
     if (!promptImage) {
-      const imgRatio =
-        input.ratio === "720:1280"
-          ? "1080:1920"
-          : input.ratio === "1280:720"
-          ? "1920:1080"
-          : "1080:1080";
+      const isVertical = input.ratio === "768:1280" || input.ratio === "9:16";
+      const imgRatio = isVertical ? "1080:1920" : "1920:1080";
       console.log("[video] creating seed image task, ratio=", imgRatio);
       const imgTask = await createImageTask({
         promptText: buildImagePrompt(input),

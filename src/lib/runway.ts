@@ -62,7 +62,7 @@ function pickStockReference(cuisineType?: string): { uri: string; tag: string } 
 interface CreateVideoOptions {
   promptImage: string;
   promptText?: string;
-  ratio?: "1280:720" | "720:1280" | "1104:832" | "832:1104" | "960:960" | "1584:672";
+  ratio?: "16:9" | "9:16" | "1280:768" | "768:1280";
   duration?: 5 | 10;
   model?: "gen3a_turbo" | "gen4_turbo";
 }
@@ -116,7 +116,7 @@ export async function createVideoTask(opts: CreateVideoOptions): Promise<{ id: s
       promptImage: opts.promptImage,
       promptText: opts.promptText,
       model: opts.model ?? "gen3a_turbo",
-      ratio: opts.ratio ?? "1280:720",
+      ratio: opts.ratio ?? "1280:768",
       duration: opts.duration ?? 5,
     }),
   });
